@@ -1,0 +1,29 @@
+{
+	"name": "RbxSound - Library",
+	"tree": {
+		"$className": "DataModel",
+
+		"ReplicatedFirst": {
+			"$className": "ReplicatedFirst",
+			"$ignoreUnknownInstances": true,
+
+			"Examples": {
+				"$path": "Examples"
+			}
+		},
+
+		"ReplicatedStorage": {
+			"$className": "ReplicatedStorage",
+			"$ignoreUnknownInstances": true,
+			
+			"RbxSound": {
+				"$path": "Source",
+
+				"Packages": {
+					"$className": "Folder",
+					"$path": "Packages"
+				}
+			}
+		}
+	}
+}
