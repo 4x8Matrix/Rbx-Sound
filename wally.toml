@@ -1,8 +1,12 @@
 [package]
 name = "4x8matrix/rbxsound"
-version = "1.0.31"
+version = "1.0.32"
 realm = "shared"
 registry = "https://github.com/upliftgames/wally-index"
+licence = "Unlicense"
+authors = ["AsynchronousMatrix <Catbob614@gmail.com>"]
+
+description = "A Sound library that helps to take advantage of the roblox sound effects & sound groups."
 
 exclude = ["**"]
 include = ["Source", "Source/*", "default.project.json", "wally.lock", "wally.toml", "LICENCE", "README.md"]
