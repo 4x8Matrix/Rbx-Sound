@@ -1,5 +1,5 @@
 [package]
-name = "4x8matrix/RbxSound"
+name = "4x8matrix/rbxsound"
 version = "1.0.2"
 realm = "shared"
 registry = "https://github.com/upliftgames/wally-index"
