@@ -17,6 +17,8 @@
 			- Appended a ChangeLog & Updated header note
 			- Removing LuaU 'strictness' flag
 			- Updated package name from 'rbxsound' -> 'RbxSound'
+		1.0.3:
+			- Addition of a README & Updating the Wally Package
 ]]--
 
 -- // SERVICES
