@@ -1,11 +1,11 @@
 [package]
 name = "4x8matrix/rbxsound"
-version = "1.0.3"
+version = "1.0.31"
 realm = "shared"
 registry = "https://github.com/upliftgames/wally-index"
 
 exclude = ["**"]
-include = ["Source", "Source/*", "default.project.json", "wally.lock", "wally.toml", "LICENCE"]
+include = ["Source", "Source/*", "default.project.json", "wally.lock", "wally.toml", "LICENCE", "README.md"]
 
 [dependencies]
 Signal = "sleitnick/signal@1.2.1"
