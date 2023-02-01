@@ -1,8 +1,22 @@
---!strict
-
 --[[
+	RbxSound: A RBX (Roblox) Sound library which helps to take advantage of roblox sound effects & sound groups.
 
+	Version: 1.0.2
+	Repository: https://github.com/4x8Matrix/Rbx-Sound
+	Developer: https://github.com/4x8Matrix
 
+	Changelog:
+		1.0.0 - 1.0.1:
+			- Development of the RbxSound library & examples
+			- 'Wally' publishing on behalf of the developer account mentioned above
+		1.0.2:
+			- Added abilitty to play multiple background SFX's
+				This howevever means you can only play one background SFX of a specific sound, the previous playing version will stop playing & restart.
+			- Updated library to remove 'Static' name
+			- Removed useless type declaration for the Library
+			- Appended a ChangeLog & Updated header note
+			- Removing LuaU 'strictness' flag
+			- Updated package name from 'rbxsound' -> 'RbxSound'
 ]]--
 
 -- // SERVICES
@@ -49,7 +63,7 @@ RbxSoundClass.Interface = { }
 RbxSoundClass.Internal = { }
 RbxSoundClass.Validators = { }
 RbxSoundClass.InstanceReferences = { }
-RbxSoundClass.BackgroundAudio = nil
+RbxSoundClass.BackgroundAudios = { }
 
 RbxSoundClass.InstanceReferences.Effects = { }
 RbxSoundClass.InstanceReferences.Sounds = { }
@@ -58,7 +72,7 @@ RbxSoundClass.InstanceReferences.Groups = { }
 RbxSoundClass.Interface.Signal = { }
 RbxSoundClass.Interface.Key = { }
 RbxSoundClass.Interface.Enum = { }
-RbxSoundClass.Interface.Static = { }
+RbxSoundClass.Interface = { }
 RbxSoundClass.Interface.Effects = { }
 
 -- // CLASS UNIQUE REFS
@@ -242,7 +256,7 @@ end
 		})
 	```
 ]]--
-function RbxSoundClass.Interface.Static.newSound(soundName: string, soundProperties: array<any>?, soundEffects: dictionary<string, SoundEffectMap>?): typeof(RbxSoundClass.Interface)
+function RbxSoundClass.Interface.newSound(soundName: string, soundProperties: array<any>?, soundEffects: dictionary<string, SoundEffectMap>?): typeof(RbxSoundClass.Interface)
 	assert(RbxSoundClass.InstanceReferences.Sounds[soundName] == nil, string.format("Sound Name '%s' already exists, failed to instantiate new sound name!", soundName))
 
 	local _, soundPreloadedSuccessfully
@@ -273,7 +287,7 @@ end
 	the 'newSoundGroup' method instantiates a sound group, sound groups are collections of sound instances which have the ability to effect a global audience of sounds.
 
 	```lua
-		RbxSound.Static.newSoundGroup("SoundGroupName", {
+		RbxSound.newSoundGroup("SoundGroupName", {
 			[RbxSound.Effects.PitchShiftSoundEffect] = {
 				Octave = 1.25,
 				Priority = 0
@@ -281,7 +295,7 @@ end
 		})
 	```
 ]]--
-function RbxSoundClass.Interface.Static.newSoundGroup(groupName: string, soundEffects: dictionary<string, SoundEffectMap>?): typeof(RbxSoundClass.Interface)
+function RbxSoundClass.Interface.newSoundGroup(groupName: string, soundEffects: dictionary<string, SoundEffectMap>?): typeof(RbxSoundClass.Interface)
 	assert(RbxSoundClass.InstanceReferences.Groups[groupName] == nil, string.format("Sound Name '%s' already exists, failed to instantiate new sound name!", groupName))
 
 	local soundGroupInstance = Instance.new("SoundGroup")
@@ -307,13 +321,13 @@ end
 	the 'playSFX' method plays a sound instance, the 'Properties' help to define a dynamic range of settings for set sound.
 
 	```lua
-		RbxSound.Static.playSFX("SoundName", {
+		RbxSound.playSFX("SoundName", {
 			[RbxSound.Key.WorldPosition] = Vector3.new(0, 5, 0),
 			[RbxSound.Key.StereoChannel] = RbxSound.Enum.StereoChannelType.Left
 		})
 	```
 ]]--
-function RbxSoundClass.Interface.Static.playSFX(soundName: string, customSoundProperties: array<any>?): PromiseObject
+function RbxSoundClass.Interface.playSFX(soundName: string, customSoundProperties: array<any>?): PromiseObject
 	return Promise.promisify(function()
 		assert(RbxSoundClass.InstanceReferences.Sounds[soundName] ~= nil, string.format("Sound Name '%s' doesn't exist! Failed to play the sound!", soundName))
 
@@ -406,7 +420,7 @@ end
 	The 'stopBackgroundSFX' method is self-explanitory, it's the key method used to stop the currently playing background SFX
 
 	```lua
-		RbxSound.Static.playBackgroundSFX("SoundName", {
+		RbxSound.playBackgroundSFX("SoundName", {
 			[RbxSound.Key.Properties] = {
 				Volume = 0.5,
 			}
@@ -414,17 +428,17 @@ end
 	```
 
 	```lua
-		RbxSound.Static.stopBackgroundSFX()
+		RbxSound.stopBackgroundSFX()
 	```
 ]]
-function RbxSoundClass.Interface.Static.stopBackgroundSFX(playStinger: boolean?): PromiseObject
+function RbxSoundClass.Interface.stopBackgroundSFX(soundName: string, playStinger: boolean?): PromiseObject
 	return Promise.promisify(function()
-		if not RbxSoundClass.BackgroundAudio then
+		if not RbxSoundClass.BackgroundAudios[soundName] then
 			return
 		end
 
-		local backgroundSoundProperties = RbxSoundClass.BackgroundAudio[2]
-		local backgroundSoundInstance = RbxSoundClass.BackgroundAudio[1]
+		local backgroundSoundProperties = RbxSoundClass.BackgroundAudio[soundName][2]
+		local backgroundSoundInstance = RbxSoundClass.BackgroundAudio[soundName][1]
 
 		if backgroundSoundProperties[RbxSoundClass.Interface.Key.FadeOutDuration] then
 			local previousVolume = backgroundSoundInstance.Volume
@@ -443,8 +457,10 @@ function RbxSoundClass.Interface.Static.stopBackgroundSFX(playStinger: boolean?)
 		end
 
 		if playStinger and backgroundSoundProperties[RbxSoundClass.Interface.Key.Stinger] then
-			RbxSoundClass.Interface.Static.playSFX(backgroundSoundProperties[RbxSoundClass.Interface.Key.Stinger])
+			RbxSoundClass.Interface.playSFX(backgroundSoundProperties[RbxSoundClass.Interface.Key.Stinger])
 		end
+
+		RbxSoundClass.BackgroundAudio[soundName] = nil
 	end)()
 end
 
@@ -452,14 +468,14 @@ end
 	the 'playBackgroundSFX' method plays a background sound instance, this instance will not respect SteroChannels or the WorldPosition as it's a global sound.
 
 	```lua
-		RbxSound.Static.playBackgroundSFX("SoundName", {
+		RbxSound.playBackgroundSFX("SoundName", {
 			[RbxSound.Key.Properties] = {
 				Volume = 0.5,
 			}
 		})
 	```
 ]]--
-function RbxSoundClass.Interface.Static.playBackgroundSFX(soundName: string, customSoundProperties: array<any>?): PromiseObject
+function RbxSoundClass.Interface.playBackgroundSFX(soundName: string, customSoundProperties: array<any>?): PromiseObject
 	return Promise.promisify(function()
 		assert(RbxSoundClass.InstanceReferences.Sounds[soundName] ~= nil, string.format("Sound Name '%s' doesn't exist! Failed to play the sound!", soundName))
 
@@ -501,8 +517,8 @@ function RbxSoundClass.Interface.Static.playBackgroundSFX(soundName: string, cus
 			RbxSoundClass.Interface.Signal.onBackgroundSoundFinished:Fire(soundName, soundLoopedIndex)
 		end)
 
-		RbxSoundClass.Interface.Static.stopBackgroundSFX(true)
-		RbxSoundClass.BackgroundAudio = { soundInstance, soundProperties }
+		RbxSoundClass.Interface.stopBackgroundSFX(soundName, true)
+		RbxSoundClass.BackgroundAudios[soundName] = { soundInstance, soundProperties }
 
 		soundInstance:Play()
 		soundInstance.Ended:Wait()
@@ -526,6 +542,4 @@ setmetatable(RbxSoundClass.Interface.Effects, {
 })
 
 -- // RETURN
-return RbxSoundClass.Interface :: typeof(RbxSoundClass.Interface) & {
-
-}
+return RbxSoundClass.Interface :: typeof(RbxSoundClass.Interface)
