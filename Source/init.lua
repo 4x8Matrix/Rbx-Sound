@@ -46,9 +46,9 @@ local BACKGROUND_SFX_PREFIX = "BackgroundSFX [%s]"
 local SFX_PREFIX = "SFX [%s]"
 
 -- // IMPORTS
-local Signal = require(script.Packages.Signal)
-local Promise = require(script.Packages.promise)
-local Sift = require(script.Packages.sift)
+local Signal = require(script.parent.Signal)
+local Promise = require(script.parent.promise)
+local Sift = require(script.parent.sift)
 
 -- // GENERIC TYPES
 export type dictionary<k, v> = { [k]: v }

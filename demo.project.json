@@ -16,12 +16,11 @@
 			"$className": "ReplicatedStorage",
 			"$ignoreUnknownInstances": true,
 			
-			"RbxSound": {
-				"$path": "Source",
+			"Packages": {
+				"$path": "Packages",
 
-				"Packages": {
-					"$className": "Folder",
-					"$path": "Packages"
+				"RbxSound": {
+					"$path": "Source"
 				}
 			}
 		}
